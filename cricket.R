@@ -1,5 +1,5 @@
-# An醠isis del canto de un grillo con R
-# www.datosimagensonido.com
+# An谩lisis del canto de un grillo con R
+# www.overfitting.net
 
 library(tuneR)
 library(corrplot)
@@ -12,7 +12,7 @@ time2sample=function(t, fs=44100) return(round(t*fs+1))
 sample2time=function(n, fs=44100) return((n-1)/fs)
 
 
-# AN罫ISIS GRILLO.WAV
+# AN脕LISIS GRILLO.WAV
                                      
 grillo=readWave("grillo.wav")
 play(grillo)
@@ -23,7 +23,7 @@ waveform=grillo@left
 
 dft=abs(fft(waveform))
 N=round(length(dft)/2)  # Primera mitad de la FFT
-maxfreq=grillo@samp.rate/2/1000  # M醲. frecuencia FFT en KHz
+maxfreq=grillo@samp.rate/2/1000  # M谩x. frecuencia FFT en KHz
 plot(seq(from=0, to=maxfreq, len=N),
     dft[1:N]/max(dft), main='FFT "grillo.wav"',
     xlab='Frecuencia (KHz)', ylab='Amplitud (Lin.)', col='red', type='l')
@@ -33,9 +33,9 @@ fgrillo=which( round(dft)==max(round(dft)) )[1] * fs/length(dft)
 Tgrillo=1/fgrillo
 
 
-# DETECCI覰 DE PULSOS INDIVIDUALES Y TRENES DE PULSOS
+# DETECCI脫N DE PULSOS INDIVIDUALES Y TRENES DE PULSOS
 
-# Detecci髇 de envolvente y normalizaci髇
+# Detecci贸n de envolvente y normalizaci贸n
 waveformabs=abs(waveform)  # Rectificamos
 envelope=waveformabs*0
 WINDOW=time2sample(Tgrillo)  # Abarcamos dos semiciclos
@@ -51,7 +51,7 @@ envelope=envelope/MAX
 waveform=waveform/MAX
 
 
-# Detecci髇 de pulsos individuales
+# Detecci贸n de pulsos individuales
 ThUP=0.2  # Umbrales
 ThDOWN=0.2  # Recomendable ThUP>=ThDOWN
 ThON=time2sample(0.05/4*0.8)  # s
@@ -96,15 +96,15 @@ while (i<=LEN) {
 pulse=rbind(pulse, c(LEN, 0))  # Cerramos la secuencia con
 
 
-# Detecci髇 de trenes de pulsos
+# Detecci贸n de trenes de pulsos
 cri=as.data.frame(rbind(c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)))
 colnames(cri)=c('n', 'N', 'D', 'Dpre', 'Dpost', 'T', 'dp', 'f', 'W',
     'duty', 'E', 'dutypre')
                   
 pulsos=pulse[2:(nrow(pulse)-1),]  # Ignoramos los '0' extremos
 LEN=nrow(pulsos)  # Siempre par
-NUM=LEN/2  # N鷐ero de pulsos
-ThINTER=3500  # Separaci髇 m醲ima de pulsos para considerarlos del mismo tren
+NUM=LEN/2  # N煤mero de pulsos
+ThINTER=3500  # Separaci贸n m谩xima de pulsos para considerarlos del mismo tren
 
 iTren=1
 i=1
@@ -122,7 +122,7 @@ while (i<=NUM-1) {
     }
     D=pulsos$n[i*2]-n
     dutypre=(D-noduty)/D
-    W=energy/(D*dutypre)  # Promedio de energ韆 emitida durante los pulsos
+    W=energy/(D*dutypre)  # Promedio de energ铆a emitida durante los pulsos
     dft=abs(fft(waveform[n:(n+D)]))
     f=which( round(dft)==max(round(dft)) )[1] * fs/length(dft)
     
@@ -142,12 +142,12 @@ for (i in 1:(nrow(cri)-1)) {
 # Otras variables derivadas
 cri$dp=cri$D*cri$dutypre/cri$N
 cri$dsilence=cri$D*(1-cri$dutypre)/(cri$N-1)  # Var. auxiliar
-cri$duty=cri$dp/(cri$dp+cri$dsilence)  # Versi髇 de dc indepte. de N
+cri$duty=cri$dp/(cri$dp+cri$dsilence)  # Versi贸n de dc indepte. de N
 cri$T=cri$dp/cri$duty
 cri$E=cri$W*cri$dp
 cri=subset(cri, select = -c(dutypre, dsilence))  # Eliminamos vars. auxiliares
 
-# Descartamos trenes con alg鷑 NA (primero y 鷏timo): 99 cri's -> 97 cri's
+# Descartamos trenes con alg煤n NA (primero y 煤ltimo): 99 cri's -> 97 cri's
 cri=cri[2:(nrow(cri)-1),]
 
 
@@ -168,14 +168,14 @@ corrplot(M, order = "AOE", col = col1(200), addCoef.col = "black",
     tl.cex=1.5, diag=F)
 
 
-# PREMIO DE CONSOLACI覰
+# PREMIO DE CONSOLACI脫N
 
 # Temperatura ambiente
 # https://es.wikipedia.org/wiki/Gryllidae (grillo campestre)
-Temperature=((60/sample2time(mean(cri$D+cri$Dpost))-40)/4+18)/1.8  # 21.5 篊
+Temperature=((60/sample2time(mean(cri$D+cri$Dpost))-40)/4+18)/1.8  # 21.5 潞C
 
 
-# Visualizaci髇 ad hoc
+# Visualizaci贸n ad hoc
 MEDIADpost=mean(cri$Dpost)
 MEDIANAf=median(cri$f)
 MINW=min(cri$W)
