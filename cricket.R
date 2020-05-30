@@ -1,5 +1,6 @@
 # Análisis del canto de un grillo con R
 # www.overfitting.net
+# https://www.overfitting.net/2018/07/analisis-del-canto-de-un-grillo-con-r.html
 
 library(tuneR)
 library(corrplot)
