@@ -4,6 +4,7 @@
 
 library(tuneR)
 library(corrplot)
+library(phonTools)  # spectrogram()
 
 
 # FUNCIONES AUXILIARES
@@ -22,6 +23,7 @@ grillo
 fs=as.numeric(grillo@samp.rate)
 waveform=grillo@left
 
+# Espectro completo
 dft=abs(fft(waveform))
 N=round(length(dft)/2)  # Primera mitad de la FFT
 maxfreq=grillo@samp.rate/2/1000  # Máx. frecuencia FFT en kHz
@@ -34,9 +36,23 @@ fgrillo=which( round(dft)==max(round(dft)) )[1] * fs/length(dft)
 Tgrillo=1/fgrillo
 
 
+# Espectrograma de 5 'cri'
+waveform=grillo@left[54800:67100]  # aislamos 5 'cri'
+waveform=waveform/max(abs(waveform))
+waveform=makesound(waveform, fs=grillo@samp.rate)
+plot(waveform, type='l')
+spectrogram(waveform, maxfreq=15000,
+            windowlength=10, timestep=1, preemphasisf=1000,
+            colors=c("white", "lightgrey", "grey", "darkgrey",
+                     "black", "red", "yellow", "white") )
+abline(h=fgrillo, col='black', lty='dotted')
+
+
+
 # DETECCIÓN DE PULSOS INDIVIDUALES Y TRENES DE PULSOS
 
 # Detección de envolvente y normalización
+waveform=grillo@left
 waveformabs=abs(waveform)  # Rectificamos
 envelope=waveformabs*0
 WINDOW=time2sample(Tgrillo)  # Abarcamos dos semiciclos
