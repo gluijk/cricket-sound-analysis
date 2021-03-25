@@ -19,11 +19,11 @@ sample2time=function(n, fs=44100) return((n-1)/fs)
 grillo=readWave("grillo.wav")
 play(grillo)
 grillo
-
 fs=as.numeric(grillo@samp.rate)
-waveform=grillo@left
+
 
 # Espectro completo
+waveform=grillo@left
 dft=abs(fft(waveform))
 N=round(length(dft)/2)  # Primera mitad de la FFT
 maxfreq=grillo@samp.rate/2/1000  # Máx. frecuencia FFT en kHz
@@ -32,7 +32,7 @@ plot(seq(from=0, to=maxfreq, len=N),
     xlab='Frecuencia (kHz)', ylab='Amplitud (Lin.)', col='red', type='l')
 axis(side=1, at=c(0:maxfreq))
 
-fgrillo=which( round(dft)==max(round(dft)) )[1] * fs/length(dft)
+fgrillo=which( round(dft)==max(round(dft)))[1] * fs/length(dft)
 Tgrillo=1/fgrillo
 
 
@@ -45,7 +45,6 @@ spectrogram(waveform, maxfreq=15000,
             windowlength=10, timestep=1, preemphasisf=1000,
             colors=c("white", "lightgrey", "grey", "darkgrey",
                      "black", "red", "yellow", "white") )
-abline(h=fgrillo, col='black', lty='dotted')
 
 
 
